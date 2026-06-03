@@ -1,0 +1,1242 @@
+/* === VARIABLES & RESET === */
+:root {
+    --gold: #c5a059;
+    --dark-bg: #1a1a1a;
+    --menu-bg: #333333;
+    --text-grey: #444;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #fff;
+    color: var(--text-grey);
+    overflow-x: hidden;
+}
+
+h1, h2, h3, h4 { font-family: 'Playfair Display', serif; }
+img { max-width: 100%; display: block; }
+
+/* === NAVIGATION === */
+.top-nav {
+    position: fixed; top: 0; width: 100%;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 15px 40px;
+    background: rgba(26, 26, 26, 0.95);
+    z-index: 900;
+    color: white;
+    border-bottom: 2px solid var(--gold);
+}
+
+.logo-box {
+    display: flex;
+    align-items: center;
+}
+
+.logo-img {
+    height: 42px;
+    width: auto;
+}
+
+.logo-text {
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+.logo-box small {
+    font-size: 0.6rem;
+    letter-spacing: 1px;
+    opacity: 0.8;
+}
+
+.nav-right { display: flex; align-items: center; gap: 20px; }
+.lang-selector { font-size: 0.9rem; cursor: pointer; }
+/* === LANGUAGE DROPDOWN === */
+.lang-dropdown select {
+    background: transparent;
+    color: white;
+    border: 1px solid var(--gold);
+    padding: 4px 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border-radius: 4px;
+    outline: none;
+}
+
+.lang-dropdown select option {
+    background: var(--menu-bg);
+    color: white;
+}
+
+
+
+/* Menu Latéral (Checkbox Hack) */
+.menu-checkbox { display: none; }
+.menu-trigger { cursor: pointer; display: flex; flex-direction: column; gap: 6px; }
+.menu-trigger .bar { width: 30px; height: 3px; background: white; transition: 0.3s; }
+
+.side-menu {
+    position: fixed; top: 0; right: -320px;
+    width: 320px; height: 100%;
+    background: var(--menu-bg);
+    z-index: 1001;
+    transition: right 0.4s ease;
+    padding-top: 20px; color: white;
+}
+
+
+.menu-list { list-style: none; padding: 0; }
+.menu-list li a { 
+    display: block; padding: 15px 40px; 
+    color: #ccc; text-decoration: none; 
+    border-bottom: 1px solid #444; 
+}
+.menu-list li.active { border-left: 5px solid var(--gold); background: #444; }
+
+.menu-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5); display: none; z-index: 1000;
+}
+
+/* Logique d'ouverture */
+.menu-checkbox:checked ~ .side-menu { right: 0; }
+.menu-checkbox:checked ~ .menu-overlay { display: block; }
+.menu-checkbox:checked ~ .main-wrapper .menu-trigger .bar:nth-child(2) { opacity: 0; }
+
+/* === HERO === */
+.hero {
+    min-height: 100vh;
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.7)), 
+                url('images/architecture-taj-mahal-neo-funeraire.jpg');
+    background-size: cover; 
+    background-position: center;
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    text-align: center; 
+    color: white; 
+    text-shadow: 0px 4px 20px rgba(0, 0, 0, 0.9);
+}
+.hero h1 { font-size: 4rem; line-height: 1.1; margin-bottom: 30px; }
+.quote { font-style: italic; font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+.author { display: block; margin-top: 15px; font-weight: bold; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px;}
+
+/* === INTRO TEXT === */
+.intro-text { padding: 60px 10%; text-align: left; }
+.intro-text h2 { font-size: 2.5rem; margin-bottom: 20px; color: #000; }
+.intro-text p { max-width: 1500px; line-height: 1.6; }
+
+/* === HISTOIRE (CARTES EXTENSIBLES) === */
+.history-section {
+    background: #222; padding: 100px 10%; color: white; position: relative;
+    overflow: hidden;
+}
+.bg-calligraphy {
+    position: absolute; top: 20px; left: -20px;
+    font-family: 'Playfair Display'; font-size: 10rem;
+    opacity: 0.05; pointer-events: none; white-space: nowrap;
+}
+.history-grid {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 40px; position: relative;
+}
+
+/* Carte Style */
+.expandable-card {
+    background: white; color: #333; width: 350px; padding: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    transition: all 1s ease;
+    align-self: flex-start;
+}
+.offset { margin-top: 80px; }
+
+/* Logique d'agrandissement */
+.expand-check { display: none; }
+.extra-text { 
+    max-height: 0; overflow: hidden; opacity: 0;
+    transition: max-height 1.1s ease, opacity 0.4s ease;
+}
+.arrow-btn {
+    display: block; width: 40px; height: 25px;
+    background: #1a1a1a; color: white; text-align: center;
+    margin: 20px auto 0; cursor: pointer; transition: transform 0.5s;
+}
+
+/* Checkbox :checked Actions */
+.expand-check:checked ~ .card-content .extra-text { max-height: 1000px; opacity: 1; margin-top: 15px; }
+.expand-check:checked ~ .card-content .arrow-btn { transform: rotate(180deg); background: var(--gold); }
+
+/* === COUPLE IMPÉRIAL === */
+.imperial-section { background: #f9f9f9; padding-top: 80px; position: relative; }
+.section-header { padding: 0 10%; margin-bottom: 60px; }
+.section-header h2 { font-size: 3.5rem; line-height: 1.1; color: #1a1a1a; }
+.subtitle { color: #666; margin-top: 10px; }
+
+.bio-content {
+    display: flex; align-items: center; justify-content: center;
+    gap: 60px; padding: 0 10% 80px; max-width: 1300px; min-width: 1300px;  margin: 0 auto;
+}
+.reverse-layout { flex-direction: row-reverse; padding-top: 150px; }
+
+/* Cadres Dorés */
+.gold-frame {
+    padding: 14px;
+    background: linear-gradient(
+        135deg,
+        #c9a24d,
+        #f7e7a1,
+        #b08a2e
+    );
+    border-radius: 6px;
+    box-shadow: 
+        0 10px 25px rgba(0,0,0,0.35),
+        inset 0 0 0 2px rgba(255,255,255,0.4);
+}
+
+.gold-frame img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Texte Bio */
+.text-wrapper h3 { font-size: 2.5rem; margin-bottom: 10px; }
+.role { display: block; font-weight: 600; color: #888; margin-bottom: 20px; font-size: 0.9rem; text-transform: uppercase; }
+.text-wrapper p { margin-bottom: 15px; line-height: 1.7; font-size: 0.95rem; max-width: 1300px; }
+
+/* Section Mumtaz (Noire avec Diagonale) */
+.mumtaz-container {
+    background: #1f1f1f; color: white;
+    padding-bottom: 80px; margin-top: -50px;
+    clip-path: polygon(0 10%, 100% 0, 100% 100%, 0% 100%);
+}
+.text-light h3 { color: white; }
+.text-light p { color: #ccc; }
+
+/* === VISITEURS === */
+.visitors-section {
+    padding: 80px 10%;
+    background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1600&q=80');
+    background-size: cover; background-attachment: fixed;
+    color: white;
+}
+.visitors-header h2 { font-size: 3rem; margin-bottom: 40px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+.visitors-grid { display: flex; flex-wrap: wrap; gap: 30px; }
+.visitor-card {
+    background: white; color: #333; padding: 30px; flex: 1; min-width: 250px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+.visitor-card h4 { font-size: 1.5rem; margin-bottom: 15px; }
+.quote-small { font-weight: bold; font-size: 0.8rem; letter-spacing: 1px; margin-top: 15px; text-transform: uppercase; }
+
+/* === FOOTER === */
+footer { background: #111; color: white; padding: 60px 10%; position: relative; overflow: hidden; }
+.footer-content { display: flex; justify-content: space-between; align-items: flex-start; z-index: 2; position: relative; }
+.footer-logo { font-size: 1.5rem; font-weight: bold; }
+.footer-logo small { display: block; font-size: 0.7rem; font-weight: normal; opacity: 0.6; }
+.footer-center { display: flex; gap: 30px; }
+.footer-center a { color: #ccc; text-decoration: none; font-size: 0.9rem; transition: color 0.3s; }
+.footer-center a:hover { color: var(--gold); }
+.unesco-watermark {
+    position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%);
+    font-size: 6rem; font-weight: bold; opacity: 0.05; font-family: 'Playfair Display'; pointer-events: none;
+}
+
+/* === RESPONSIVE SIMPLE === */
+@media (max-width: 900px) {
+    .history-grid, .bio-content, .bio-content.reverse-layout, .visitors-grid { flex-direction: column; }
+    .offset { margin-top: 0; }
+    .gold-frame { margin: 0 auto; }
+    .text-wrapper { text-align: right; }
+    .mumtaz-container { clip-path: polygon(0 3%, 100% 0, 100% 100%, 0% 100%); padding-top: 80px; }
+    .hero h1 { font-size: 2.5rem; }
+}
+
+/* === PAGE ARCHITECTURE === */
+
+/* Conteneur Principal avec image de fond */
+.arch-page-container {
+    width: 100%;
+    min-height: 100vh;
+    background: url(images/meric-dagli-vmvk172z034-unsplash.jpg);
+    background-size: cover;
+    background-position: center top;
+    padding: 120px 10% 80px;
+}
+
+/* En-tête Architecture */
+.arch-header {
+    margin-bottom: 60px;
+    position: relative;
+    z-index: 2;
+}
+
+.arch-header h1 {
+    font-size: 5rem;
+    color: #1a1a1a;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 20px rgba(255,255,255,0.8); 
+}
+
+.arch-header .subtitle {
+    font-style: italic;
+    font-size: 1.2rem;
+    color: #333;
+    font-weight: 500;
+    text-shadow: 1px 1px 10px rgba(255,255,255,0.8);
+}
+
+/* Grille Architecture (2 colonnes) */
+.arch-grid {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.arch-column {
+    display: flex;
+    flex-direction: column;
+    gap: 60px;
+    width: 380px;
+}
+
+/* La colonne de droite est décalée vers le bas */
+.offset-col {
+    padding-top: 200px;
+}
+
+/* Ajustement des cartes pour cette page */
+.arch-grid .expandable-card {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.95); 
+}
+
+.timeline-container {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 60px 40px;
+    margin: 40px auto;
+    max-width: 1100px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.timeline-wrapper { position: relative; }
+
+/* On cache les radios */
+input[name="timeline-trigger"] { display: none; }
+
+.timeline-bg { width: 100%; height: auto; }
+
+.timeline-labels {
+    position: absolute; top: 0; left: 0; width: 100%; height: 60px;
+}
+
+.hotspot {
+    position: absolute;
+    width: 45px; height: 45px;
+    cursor: pointer;
+    border-radius: 50%;
+    top: 5px;
+    transition: background 0.3s;
+}
+
+.hotspot:hover { background: rgba(197, 160, 89, 0.2); }
+
+/* Zone de texte */
+.date-info-display {
+    margin-top: 40px;
+    padding: 25px;
+    border-top: 1px solid #eee;
+    min-height: 80px;
+}
+
+.date-info-display p {
+    display: none;
+    font-size: 1.2rem;
+    color: var(--text-grey);
+    animation: fadeIn 0.5s ease;
+}
+
+/* LOGIQUE D'AFFICHAGE CSS */
+#date-1526:checked ~ .date-info-display .desc-1526,
+#date-1612:checked ~ .date-info-display .desc-1612,
+#date-1628:checked ~ .date-info-display .desc-1628,
+#date-1631:checked ~ .date-info-display .desc-1631,
+#date-1632:checked ~ .date-info-display .desc-1632,
+#date-1648:checked ~ .date-info-display .desc-1648,
+#date-1666:checked ~ .date-info-display .desc-1666,
+#date-1857:checked ~ .date-info-display .desc-1857,
+#date-1908:checked ~ .date-info-display .desc-1908,
+#date-1983:checked ~ .date-info-display .desc-1983 {
+    display: block;
+    color: var(--gold);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- RESPONSIVE ARCHITECTURE --- */
+@media (max-width: 900px) {
+    .arch-grid {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .offset-col {
+        padding-top: 0;
+    }
+
+    .arch-header h1 {
+        font-size: 3rem;
+    }
+    
+    .arch-page-container {
+        padding-top: 100px;
+    }
+}
+
+/* === PAGES HISTOIRE === */
+
+.hist-topbar {
+  background: #222;
+  color: white;
+  padding: 10px 20px;
+}
+
+.hist-page-container {
+  width: 100%;
+  min-height: 100vh;
+  background: url(images/tour.jpg);
+  background-size: cover;
+  background-position: center top;
+  padding: 100px 3% 100px;
+}
+
+.hist-header {
+    margin-bottom: 60px;
+    position: relative;
+    z-index: 2;
+}
+
+.hist-header h1 {
+    font-size: 5rem;
+    color: #1a1a1a;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 20px rgba(255,255,255,0.8); 
+}
+    
+.hist-header .subtitle {
+    font-style: italic;
+    font-size: 1.2rem;
+    color: #333;
+    font-weight: 500;
+    text-shadow: 1px 1px 10px rgba(255,255,255,0.8);
+}
+
+.hist-grid {
+    display: flex;
+    justify-content: left;
+    gap: 10px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.hist-column {
+    display: flex;
+    flex-direction: column;
+    gap: 60px;
+    width: 310px;
+}
+.hist-off-grid{
+    display: flex;
+    justify-content: right;
+    gap: 60px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.offset-col {
+    padding-top: 100px;
+    justify-content: right;
+}
+
+
+/* === PAGE QUI SOMMES-NOUS === */
+.about-page { background: #1a1a1a; min-height: 100vh; padding-bottom: 100px; }
+
+.about-hero {
+    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url(images/taj-mahal-201747_960_720.jpg);
+    padding: 120px 10% 60px;
+    color: white;
+}
+
+.about-hero h1 { font-size: 3.5rem; }
+
+.about-content { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+
+/* Carte Projet (UNESCO) */
+.project-goal-card {
+    background: white;
+    display: flex;
+    margin: -40px auto 80px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
+
+.goal-text { padding: 40px; flex: 2; }
+.goal-image { flex: 1; display: flex; align-items: center; justify-content: center; clip-path: polygon(20% 0, 100% 0, 100% 100%, 0% 100%); }
+.unesco-blue { background: #4189dd; }
+.goal-image img { width: 80%; }
+
+/* Cartes Membres */
+.team-list { display: flex; flex-direction: column; gap: 20px; align-items: center; }
+
+.member-card {
+    display: flex;
+    width: 80%;
+    height: 120px;
+    align-items: center;
+    position: relative;
+    transition: transform 0.3s;
+}
+
+.member-card.dark { background: #262626; color: white; }
+.member-card.light { background: white; color: #1a1a1a; margin-left: 50px; }
+
+.member-info { flex: 2; padding: 0 40px; }
+.member-info h4 { font-size: 1.4rem; margin-bottom: 5px; }
+.member-info span { font-size: 0.8rem; opacity: 0.8; }
+
+.member-photo {
+    flex: 1;
+    height: 100%;
+    overflow: hidden;
+    clip-path: polygon(25% 0, 100% 0, 100% 100%, 0% 100%);
+}
+
+/* Inversion pour les membres pairs */
+.member-card.reversed { flex-direction: row; }
+.member-card.reversed .member-photo { clip-path: polygon(0 0, 100% 0, 75% 100%, 0% 100%); }
+
+.member-photo img { width: 100%; height: 100%; object-fit: cover; }
+
+.member-card:hover { transform: scale(1.02); z-index: 10; }
+
+.intro-image {
+    display: flex;
+    justify-content: center;
+    margin: 4rem 0;
+}
+
+.intro-image img {
+    max-width: 2000px;
+    width: 300%;
+}
+
+.mcn-watermark {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 999;
+    pointer-events: none;
+}
+
+.mcn-watermark img {
+    width: 48px;
+    opacity: 0.25;
+}
+
+/* === IDA (CALL TO ACTION) === */
+.ida-container {
+    text-align: center;
+    padding: 60px 20px;
+    background-color: transparent;
+    border-top: 1px solid #333;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+.ida-title {
+    color: white;
+    font-size: 2rem;
+    margin-bottom: 30px;
+}
+
+.cta-button {
+    display: inline-block;
+    padding: 15px 40px;
+    background-color: var(--gold);
+    color: #1a1a1a;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 1.1rem;
+    border-radius: 4px;
+    border: 2px solid var(--gold);
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.cta-button:hover {
+    background-color: transparent;
+    color: var(--gold);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+}
+
+/* === SECTION DYNASTIE === */
+.dynasty-section {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 50px;
+    margin: 40px auto 80px auto;
+    max-width: 1200px;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    position: relative;
+    z-index: 3;
+}
+
+.dynasty-intro {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.dynasty-intro h2 {
+    font-size: 2.8rem;
+    color: #1a1a1a;
+    margin-bottom: 10px;
+}
+
+.dynasty-intro p {
+    font-style: italic;
+    color: #555;
+}
+
+.dynasty-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.dynasty-card {
+    background: white;
+    border: 1px solid #eee;
+    padding: 25px 20px;
+    width: 200px;
+    text-align: center;
+    border-radius: 8px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dynasty-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.dynasty-card h4 {
+    font-size: 1.4rem;
+    color: #1a1a1a;
+    margin-bottom: 5px;
+}
+
+.reign-dates {
+    display: block;
+    font-size: 0.9rem;
+    color: #888;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.dynasty-card p {
+    font-size: 0.85rem;
+    color: var(--gold);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Mise en avant de Shah Jahan */
+.highlight-card {
+    border: 2px solid var(--gold);
+    background: linear-gradient(to bottom, #fff, #fdfbf7);
+}
+
+
+/* Cartes Membres */
+.information-list { display: flex; flex-direction: column; align-items: center; }
+
+.info-card {
+    display: flex;
+    width: 110%;
+    align-items: center;
+    position: relative;
+    transition: transform 0.3s;
+}
+
+.info-card.dark { background: #262626; color: white; }
+.info-card.light { background: white; color: #1a1a1a; }
+
+.visit-info { flex: 2; padding: 0 40px; }
+.visit-info h4 { font-size: 1.4rem; margin-bottom: 5px; }
+.visit-info span { font-size: 0.8rem; opacity: 0.8; }
+
+.visit-photo {
+    flex: 1;
+    height: 100%;
+    overflow: hidden;
+    clip-path: polygon(25% 0, 100% 0, 100% 100%, 0% 100%);
+}
+
+/* Inversion pour les membres pairs */
+.info-card.reversed { 
+    flex-direction: row-reverse; 
+}
+.info-card.reversed .visit-photo { 
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 25% 100%); 
+}
+.info-card.reversed .visit-info {
+    text-align: left; /* Garder le texte aligné à gauche même si la carte est inversée */
+}
+.visit-page {
+    background-color: var(--dark-bg);
+    color: #ccc;
+}
+.visit-page .hero {
+    min-height: 50vh; /* Moins haut que l'accueil */
+}
+.visit-photo img { width: 120%; height: 120%; object-fit: cover; }
+
+.info-card:hover { transform: scale(1.02); z-index: 10; }
+
+/* --- SECTION RÉSUMÉ DU PARCOURS --- */
+.summary-table {
+    font-size: 0.85rem;
+    line-height: 1.8;
+    margin-top: 20px;
+}
+
+.summary-row {
+    display: grid;
+    grid-template-columns: 65px 1fr 120px;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.summary-header {
+    font-weight: 600;
+    margin-bottom: 15px;
+    opacity: 0.8;
+}
+
+/* Ajustement de la carte pour centrer verticalement le texte */
+.info-card.summary-card {
+    align-items: center;
+}
+
+/* ===================================================
+   CORRECTIFS ACCESSIBILITÉ MOBILE — À AJOUTER
+   à la fin de style.css
+   =================================================== */
+
+/* --- Typographie fluide (tous écrans) --- */
+.hero h1 {
+    font-size: clamp(1.8rem, 6vw, 4rem);
+}
+
+.arch-header h1,
+.hist-header h1 {
+    font-size: clamp(2rem, 8vw, 5rem);
+}
+
+.section-header h2,
+.about-hero h1 {
+    font-size: clamp(1.8rem, 6vw, 3.5rem);
+}
+
+/* --- Zones tactiles (WCAG 2.5.5 — minimum 44px) --- */
+.arrow-btn {
+    min-height: 44px;
+    width: auto;
+    padding: 8px 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cta-button {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.menu-list li a {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+}
+
+/* --- Images débordantes --- */
+.intro-image img {
+    width: 100%;
+    max-width: 100%;
+}
+
+/* ===================================================
+   MEDIA QUERY MOBILE — ≤ 768px
+   =================================================== */
+@media (max-width: 768px) {
+
+    /* Navigation */
+    .top-nav {
+        padding: 10px 16px;
+    }
+
+    .side-menu {
+        width: min(320px, 90vw);
+    }
+
+    /* Héros */
+    .hero {
+        min-height: 70vh;
+        padding: 20px;
+    }
+
+    .hero-content {
+        padding: 0 10px;
+    }
+
+    .quote {
+        font-size: 0.95rem;
+    }
+
+    /* Intro */
+    .intro-text {
+        padding: 40px 5%;
+    }
+
+    .intro-text h2 {
+        font-size: clamp(1.6rem, 5vw, 2.5rem);
+    }
+
+    /* Section histoire */
+    .history-section {
+        padding: 60px 5%;
+    }
+
+    .expandable-card {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .bg-calligraphy {
+        font-size: 5rem;
+    }
+
+    /* Couple impérial */
+    .bio-content,
+    .bio-content.reverse-layout {
+        flex-direction: column;
+        min-width: unset;
+        max-width: 100%;
+        width: 100%;
+        padding: 0 5% 60px;
+        gap: 30px;
+    }
+
+    .reverse-layout {
+        padding-top: 60px;
+    }
+
+    .gold-frame img {
+        max-height: 320px;
+        width: 100%;
+        object-fit: cover;
+    }
+
+    .text-wrapper {
+        text-align: left;
+    }
+
+    .text-wrapper h3 {
+        font-size: 1.8rem;
+    }
+
+    /* Visiteurs */
+    .visitors-section {
+        padding: 50px 5%;
+        background-attachment: scroll; /* evite le bug iOS avec fixed */
+    }
+
+    .visitors-header h2 {
+        font-size: clamp(1.6rem, 5vw, 3rem);
+    }
+
+    /* Carte membre */
+    .member-card {
+        width: 100%;
+        height: auto;
+        min-height: 100px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .member-card.light {
+        margin-left: 0;
+    }
+
+    .member-card.reversed {
+        flex-direction: column;
+    }
+
+    .member-info {
+        padding: 16px 20px;
+        width: 100%;
+    }
+
+    .member-photo {
+        width: 100%;
+        height: 160px;
+        clip-path: none;
+        border-radius: 0;
+    }
+
+    .member-card.reversed .member-photo {
+        clip-path: none;
+    }
+
+    /* Carte info (visite) */
+    .info-card {
+        width: 100%;
+        flex-direction: column;
+        height: auto;
+    }
+
+    .info-card.reversed {
+        flex-direction: column;
+    }
+
+    .visit-info {
+        padding: 20px;
+        width: 100%;
+    }
+
+    .visit-photo {
+        width: 100%;
+        height: 180px;
+        clip-path: none;
+        order: -1; /* photo toujours en premier */
+    }
+
+    .info-card.reversed .visit-photo {
+        clip-path: none;
+    }
+
+    /* Objectif UNESCO */
+    .project-goal-card {
+        flex-direction: column;
+    }
+
+    .goal-image {
+        clip-path: none;
+        padding: 30px;
+        min-height: 120px;
+    }
+
+    .goal-text {
+        padding: 24px;
+    }
+
+    /* Section Architecture */
+    .arch-page-container {
+        padding: 90px 5% 60px;
+    }
+
+    .arch-grid {
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+    }
+
+    .arch-column {
+        width: 100%;
+        max-width: 480px;
+    }
+
+    .arch-column.offset-col {
+        padding-top: 0;
+    }
+
+    /* Section Histoire */
+    .hist-page-container {
+        padding: 90px 5% 60px;
+    }
+
+    .hist-grid,
+    .hist-off-grid {
+        justify-content: center;
+    }
+
+    .hist-column {
+        width: 100%;
+        max-width: 480px;
+    }
+
+    .hist-column.offset-col {
+        padding-top: 0;
+    }
+
+    /* Section Dynastie */
+    .dynasty-section {
+        padding: 30px 20px;
+        margin: 20px auto 50px;
+    }
+
+    .dynasty-intro h2 {
+        font-size: clamp(1.6rem, 5vw, 2.8rem);
+    }
+
+    .dynasty-card {
+        min-width: 130px;
+        flex: 1 1 130px;
+        padding: 16px 12px;
+    }
+
+    .dynasty-card h4 {
+        font-size: 1.1rem;
+    }
+
+    /* Mumtaz section */
+    .mumtaz-container {
+        clip-path: none;
+        padding-top: 50px;
+    }
+
+    /* Footer */
+    .footer-content {
+        flex-direction: column;
+        gap: 20px;
+        align-items: center;
+        text-align: center;
+    }
+
+    .footer-center {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .unesco-watermark {
+        font-size: 3.5rem;
+    }
+
+    /* Résumé parcours */
+    .summary-row {
+        grid-template-columns: 55px 1fr 80px;
+        font-size: 0.78rem;
+    }
+
+    /* Section visiteurs (cartes) */
+    .visitor-card {
+        min-width: 100%;
+    }
+}
+
+/* ===================================================
+   MEDIA QUERY TRÈS PETIT — ≤ 400px
+   =================================================== */
+@media (max-width: 400px) {
+
+    .top-nav {
+        padding: 8px 12px;
+    }
+
+    .logo-img {
+        height: 32px;
+    }
+
+    .dynasty-container {
+        gap: 12px;
+    }
+
+    .dynasty-card {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+
+    .expandable-card {
+        padding: 20px;
+    }
+
+    .member-card,
+    .info-card {
+        border-radius: 0;
+    }
+
+    .ida-title {
+        font-size: 1.4rem;
+    }
+}
+
+/* ===================================================
+   CORRECTIF LISIBILITÉ — PAGE HISTOIRE (mobile)
+   Ajouter à la fin de style.css
+   =================================================== */
+
+/* --- Desktop : fond semi-opaque derrière le texte --- */
+.hist-grid .hist-column,
+.hist-off-grid .hist-column {
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    padding: 28px 32px;
+    border-left: 4px solid var(--gold);
+}
+
+.hist-grid .hist-column h1,
+.hist-off-grid .hist-column h1 {
+    font-size: 1.4rem;
+    color: #1a1a1a;
+    margin-bottom: 12px;
+    line-height: 1.3;
+}
+
+.hist-grid .hist-column p,
+.hist-off-grid .hist-column p {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #333;
+}
+
+/* ===================================================
+   MOBILE ≤ 768px — frise verticale centrée
+   =================================================== */
+@media (max-width: 768px) {
+
+    .hist-page-container {
+        padding: 90px 0 60px;
+    }
+
+    /* Annuler le positionnement gauche/droite */
+    .hist-grid,
+    .hist-off-grid {
+        display: block;
+        max-width: 100%;
+        margin: 0;
+        padding: 0 16px;
+    }
+
+    /* Remettre à zéro le décalage vertical de la colonne droite */
+    .hist-column.offset-col {
+        padding-top: 0;
+    }
+
+    /* Chaque bloc devient une carte de frise */
+    .hist-grid .hist-column,
+    .hist-off-grid .hist-column {
+        width: 100%;
+        max-width: 100%;
+        background: rgba(255, 255, 255, 0.93);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        padding: 20px 20px 20px 24px;
+        border-left: 4px solid var(--gold);
+        border-radius: 0 6px 6px 0;
+        margin-bottom: 16px;
+        position: relative;
+    }
+
+    /* Point de frise sur la bordure gauche */
+    .hist-grid .hist-column::before,
+    .hist-off-grid .hist-column::before {
+        content: '';
+        position: absolute;
+        left: -8px;
+        top: 24px;
+        width: 12px;
+        height: 12px;
+        background: var(--gold);
+        border-radius: 50%;
+        border: 2px solid white;
+    }
+
+    /* Ligne verticale reliant les points */
+    .hist-grid,
+    .hist-off-grid {
+        border-left: 2px solid rgba(197, 160, 89, 0.35);
+        margin-left: 24px;
+        padding-left: 20px;
+    }
+
+    .hist-grid .hist-column h1,
+    .hist-off-grid .hist-column h1 {
+        font-size: 1.1rem;
+        margin-bottom: 8px;
+    }
+
+    .hist-grid .hist-column p,
+    .hist-off-grid .hist-column p {
+        font-size: 0.9rem;
+        line-height: 1.65;
+        color: #222;
+    }
+
+    /* Section Dynastie */
+    .dynasty-section {
+        margin: 20px 16px 40px;
+        padding: 24px 16px;
+    }
+
+    .dynasty-container {
+        gap: 10px;
+    }
+
+    .dynasty-card {
+        flex: 1 1 130px;
+        min-width: 120px;
+        padding: 14px 10px;
+    }
+
+    /* Header */
+    .hist-header {
+        padding: 0 20px;
+        margin-bottom: 30px;
+    }
+
+    .hist-header h1 {
+        font-size: clamp(2.5rem, 10vw, 5rem);
+        text-shadow: 2px 2px 12px rgba(255,255,255,0.95);
+    }
+
+    .hist-header .subtitle {
+        font-size: 1rem;
+        text-shadow: 1px 1px 8px rgba(255,255,255,0.95);
+    }
+}
+
+.lang-flags {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.flag-icon {
+    width: 28px;
+    height: auto;
+    border-radius: 3px;
+    opacity: 0.6;
+    transition: opacity 0.2s, transform 0.2s;
+    cursor: pointer;
+}
+
+.flag-icon:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.active-flag {
+    opacity: 1;
+    border: 2px solid var(--gold);
+    border-radius: 3px;
+}
